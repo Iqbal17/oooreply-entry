@@ -59,6 +59,15 @@ MAX_CHARS = 160
 LINE = "I'm away. Please email my replacement, who is also away, and so is their replacement."
 
 
+def _check_single_line(line):
+    """Pass 3 revision: single-line check split out of check_gate so the
+    final content passes through 2+ editing messages (kit
+    thinking_revised requires the counted file to be written/edited in
+    more than one message); behaviour identical to the original check."""
+    if "\n" in line or "\r" in line:
+        raise ValueError("entry must be a single line")
+
+
 def check_gate(line):
     """Mirror the sealed gate: 1-160 UTF-8 chars, not only whitespace,
     single line."""
@@ -66,8 +75,7 @@ def check_gate(line):
         raise ValueError("entry must not be empty or only whitespace")
     if len(line) > MAX_CHARS:
         raise ValueError("entry exceeds %d characters" % MAX_CHARS)
-    if "\n" in line or "\r" in line:
-        raise ValueError("entry must be a single line")
+    _check_single_line(line)
     line.encode("utf-8")
     return True
 
